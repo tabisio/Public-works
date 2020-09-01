@@ -4,6 +4,8 @@ from selenium.webdriver.common.keys import Keys
 
 import pandas as pd
 
+import time
+
 
 poke_info_uber_eats=[]
 poke_info_uber_eats= pd.DataFrame({'name':[0],
