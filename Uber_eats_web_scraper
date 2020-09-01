@@ -1,0 +1,97 @@
+from selenium import webdriver
+
+from selenium.webdriver.common.keys import Keys
+
+import pandas as pd
+
+
+poke_info_uber_eats=[]
+poke_info_uber_eats= pd.DataFrame({'name':[0],
+                    'score':[0],'price':[0],'city':[0]})
+
+# Send a starting url, use the page opened as starting point
+
+url2="https://www.ubereats.com/it-en/search?pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMk1pbGFuJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSjUzVVNQMG5CaGtjUmpRNTB4aFBOX3p3JTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTQ1LjQ2NDIwMzUlMkMlMjJsb25naXR1ZGUlMjIlM0E5LjE4OTk4MiU3RA%3D%3D&q=poke"
+
+
+# Input a CSV with a list of cities where you want to make your scraping
+uber_eats_info_url=pd.read_csv(r"C:\Users\gioco\Desktop\PH_notebook\input_ubereats\input_svizzera.csv")
+
+uber_eats_info_url
+
+for z in range(1,len(uber_eats_info_url)):
+    
+    city=uber_eats_info_url["City"][z]
+    
+    driver=webdriver.Chrome(r"C:\Users\gioco\Desktop\PH_notebook\chromedriver_win32\chromedriver")
+
+    url1=url2
+
+    driver.get(url1)
+    time.sleep(10)
+    search=driver.find_element_by_xpath("//*[@id='wrapper']/header/div/div/div[2]")
+
+    search.click()
+
+    search=search.find_element_by_id("location-typeahead-header-input")
+
+    for i in range(0,15):
+        search.send_keys(Keys.BACKSPACE)
+
+    search.send_keys(city)
+    time.sleep(2)
+
+    search.send_keys(Keys.RETURN)
+    time.sleep(5)
+
+    search=driver.find_element_by_xpath("//*[@id='wrapper']/header/div/div/div[6]/div[1]")
+    time.sleep(2)
+    search.click()
+
+    search=search.find_element_by_id("search-suggestions-typeahead-input")
+
+    for i in range(0,15):
+        search.send_keys(Keys.BACKSPACE)
+
+    search.send_keys("Poke")
+    time.sleep(3)
+
+    search.send_keys(Keys.RETURN)
+    time.sleep(5)
+
+    try:
+        number_of_restaurants=driver.find_element_by_xpath("//*[@id='wrapper']/main/div[2]/h2")
+        
+    except Exception:
+        driver.quit()
+        continue
+
+    number_of_restaurants=int(number_of_restaurants.text[:2])
+
+    for i in range(1,number_of_restaurants+1):
+        name=driver.find_element_by_xpath("//*[@id='wrapper']/main/div[2]/div[2]/div["+str(i)+"]/div/div/div/div/div[1]/div[1]/h3").text
+        name=pd.DataFrame([name],index=[0])
+
+        score=driver.find_element_by_xpath("//*[@id='wrapper']/main/div[2]/div[2]/div["+str(i)+"]/div/div/div/div/div[1]/div[3]").text
+        score=pd.DataFrame([score],index=[0])
+        
+        try:
+            price=driver.find_element_by_xpath("//*[@id='wrapper']/main/div[2]/div[2]/div["+str(i)+"]/div/div/div/div/div[1]/div[1]/div/div[2]").text
+        except Exception:
+            price=""
+        
+        price=price.replace(" ","").replace("•","").replace("€€","2").replace("€","1")
+        price=pd.DataFrame([price],index=[0])
+
+        city=uber_eats_info_url["City"][z]
+        city=pd.DataFrame([city],index=[0])
+
+        data_tot=pd.concat([name,score,price,city],axis=1)
+        data_tot.columns=poke_info_uber_eats.columns
+        poke_info_uber_eats=poke_info_uber_eats.append(data_tot,ignore_index=True)
+        
+    driver.quit()
+    
+poke_info_uber_eats=poke_info_uber_eats.drop(poke_info_uber_eats.index[0]).reset_index(drop=True)
+
+poke_info_uber_eats.to_csv(r"C:\Users\gioco\Desktop\PH_notebook\output_uber_eats\poke_info_uber_eats_Svizzera.csv")
