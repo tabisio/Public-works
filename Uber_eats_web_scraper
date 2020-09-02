@@ -21,7 +21,7 @@ uber_eats_info=pd.read_csv(r"C:\Users\gioco\Desktop\PH_notebook\input_ubereats\i
 
 uber_eats_info
 
-for z in range(1,len(uber_eats_info_url)):
+for z in range(1,len(uber_eats_info)):
     
     city=uber_eats_info["City"][z]
     
