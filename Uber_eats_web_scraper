@@ -16,14 +16,14 @@ poke_info_uber_eats= pd.DataFrame({'name':[0],
 url2="https://www.ubereats.com/it-en/search?pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMk1pbGFuJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSjUzVVNQMG5CaGtjUmpRNTB4aFBOX3p3JTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTQ1LjQ2NDIwMzUlMkMlMjJsb25naXR1ZGUlMjIlM0E5LjE4OTk4MiU3RA%3D%3D&q=poke"
 
 
-# Input a CSV with a list of cities where you want to make your scraping
-uber_eats_info_url=pd.read_csv(r"C:\Users\gioco\Desktop\PH_notebook\input_ubereats\input_svizzera.csv")
+# Input a CSV with a column named "City" with the cities where you want to make the scraping
+uber_eats_info=pd.read_csv(r"C:\Users\gioco\Desktop\PH_notebook\input_ubereats\input_svizzera.csv")
 
-uber_eats_info_url
+uber_eats_info
 
 for z in range(1,len(uber_eats_info_url)):
     
-    city=uber_eats_info_url["City"][z]
+    city=uber_eats_info["City"][z]
     
     driver=webdriver.Chrome(r"C:\Users\gioco\Desktop\PH_notebook\chromedriver_win32\chromedriver")
 
@@ -54,6 +54,8 @@ for z in range(1,len(uber_eats_info_url)):
 
     for i in range(0,15):
         search.send_keys(Keys.BACKSPACE)
+        
+    # Send as keys the kind of restaurant you want to find
 
     search.send_keys("Poke")
     time.sleep(3)
@@ -85,7 +87,7 @@ for z in range(1,len(uber_eats_info_url)):
         price=price.replace(" ","").replace("•","").replace("€€","2").replace("€","1")
         price=pd.DataFrame([price],index=[0])
 
-        city=uber_eats_info_url["City"][z]
+        city=uber_eats_info["City"][z]
         city=pd.DataFrame([city],index=[0])
 
         data_tot=pd.concat([name,score,price,city],axis=1)
