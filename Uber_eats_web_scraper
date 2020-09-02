@@ -25,6 +25,8 @@ for z in range(1,len(uber_eats_info)):
     
     city=uber_eats_info["City"][z]
     
+    # Downlowad chromedriver and put here its path
+    
     driver=webdriver.Chrome(r"C:\Users\gioco\Desktop\PH_notebook\chromedriver_win32\chromedriver")
 
     url1=url2
